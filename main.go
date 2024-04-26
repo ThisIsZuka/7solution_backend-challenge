@@ -5,12 +5,11 @@ import (
 )
 
 func main() {
-	// เรียกใช้ Engine ของ Gin
 	r := gin.Default()
 
-	// กำหนดเส้นทาง /hello ให้เรียกใช้ฟังก์ชัน helloHandler
-	r.GET("/hello", MainHandler)
+	r.GET("/Q01", MainHandler)
 
-	// ให้ Gin รันบนพอร์ต 8080
+	r.POST("/Q02", Main02Handler)
+
 	r.Run(":8080")
 }

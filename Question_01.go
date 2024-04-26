@@ -4,7 +4,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"os"
 
@@ -18,26 +17,16 @@ func MainHandler(c *gin.Context) {
 		return
 	}
 
-	ans := RoadSum(data)
+	ans, err := RoadSum(data)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	c.JSON(http.StatusOK, ans)
 }
 
-func RoadSum(data [][]int) int {
-
-	// assum := [][]int{
-	// 	{59},
-	// 	{73, 41},
-	// 	{52, 40, 9},
-	// 	{26, 53, 6, 34},
-	// 	{10, 51, 87, 86, 81},
-	// 	{61, 95, 66, 57, 25, 68},
-	// 	{90, 81, 80, 38, 92, 67, 73},
-	// 	{30, 28, 51, 76, 81, 18, 75, 44},
-	// 	{84, 14, 95, 87, 62, 81, 17, 78, 58},
-	// 	{21, 46, 71, 58, 2, 79, 62, 39, 31, 9},
-	// 	{56, 34, 35, 53, 78, 31, 81, 18, 90, 93, 15},
-	// }
+func RoadSum(data [][]int) (int, error) {
 
 	var index = 0
 	var ans_sum = 0
@@ -57,12 +46,9 @@ func RoadSum(data [][]int) int {
 			}
 		}
 		ans_sum += maxValue
-		fmt.Println("Round Sum:", ans_sum)
 	}
 
-	fmt.Println("Sum:", ans_sum)
-
-	return ans_sum
+	return ans_sum, nil
 }
 
 func ReadJsonfile() ([][]int, error) {
