@@ -11,5 +11,7 @@ func main() {
 
 	r.POST("/Q02", Main02Handler)
 
+	r.GET("/Q03", Main03Handler)
+
 	r.Run(":8080")
 }

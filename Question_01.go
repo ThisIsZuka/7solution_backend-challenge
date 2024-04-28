@@ -13,13 +13,13 @@ import (
 func MainHandler(c *gin.Context) {
 	data, err := ReadJsonfile()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "เกิดข้อผิดพลาดขณะอ่านไฟล์"})
+		c.JSON(http.StatusOK, gin.H{"error": "เกิดข้อผิดพลาดขณะอ่านไฟล์"})
 		return
 	}
 
 	ans, err := RoadSum(data)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusOK, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -52,7 +52,7 @@ func RoadSum(data [][]int) (int, error) {
 }
 
 func ReadJsonfile() ([][]int, error) {
-	// อ่านข้อมูล JSON จากไฟล์
+
 	file, err := os.ReadFile("./hard.json")
 	if err != nil {
 		return nil, err

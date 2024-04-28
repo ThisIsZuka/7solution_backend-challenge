@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,19 +12,18 @@ func Main02Handler(c *gin.Context) {
 
 	input := c.PostForm("input")
 	if input == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "request input"})
+		c.JSON(http.StatusOK, gin.H{"error": "request input"})
 		return
 	}
 
 	err := VerifyInput(input)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusOK, gin.H{"error": err.Error()})
 		return
 	}
 
-	DecodeText(input)
-
-	c.JSON(http.StatusOK, input)
+	ans := decode(input)
+	c.JSON(http.StatusOK, ans)
 }
 
 func VerifyInput(input string) error {
@@ -48,40 +46,32 @@ func VerifyInput(input string) error {
 	return nil
 }
 
-func DecodeText(input string) {
+func decode(input string) []int {
 	// สัญลักษณ์ “L” หมายความว่า ตัวเลขด้านซ้าย มีค่ามากกว่า ตัวเลขด้านขวา
 	// สัญลักษณ์ “R” หมายความว่า ตัวเลขด้านขวา มีค่ามากกว่า ตัวเลขด้านซ้าย
 	// สัญลักษณ์ “=“ หมายความว่า ตัวเลขด้านซ้าย มีค่าเท่ากับ ตัวเลขด้านขวา
 
-	// i_f := 0
-	// i_m := 0
-	// i_l := 0
-
-	ans := ""
-
-	for f := 0; f <= 9; f++ {
-		for i, char := range input {
-
-			if i == 0 {
-				if string(char) == "L" {
-					ans += strconv.Itoa(1)
-				} else {
-					ans += strconv.Itoa(f)
-				}
-				continue
-			}
-
-			i_r_char := string(ans[i-1])
-			i_r_charInt := strconv.Atoi(string(char))
-			if string(char) == "L" {
-				ans += strconv.Itoa(1)
-			} else if string(char) == "R" {
-				ans += strconv.Itoa(2)
+	Numbers := make([]int, 0)
+	Numbers = append(Numbers, 0)
+	for i := 1; i < len(input); i++ {
+		fmt.Println(i)
+		switch input[i] {
+		case 'L':
+			if input[i-1] == 'L' && input[i] != 'L' {
+				Numbers[len(Numbers)-1]++
+				Numbers = append(Numbers, Numbers[len(Numbers)-1]-1)
 			} else {
-				ans += strconv.Itoa(3)
+				Numbers[len(Numbers)-1] += 2
+				Numbers = append(Numbers, Numbers[len(Numbers)-1]-1)
 			}
+		case 'R':
+			Numbers = append(Numbers, i)
+			Numbers = append(Numbers, i+1)
+		case '=':
+			Numbers = append(Numbers, i)
+			Numbers = append(Numbers, i)
 		}
+		break
 	}
-
-	fmt.Println(ans)
+	return Numbers
 }
